@@ -14,11 +14,14 @@
 <body onload="hits_span.innerHTML = hits;spins_span.innerHTML = spins;">
 
     <header>
-        <h1>
-            <script>
-                document.write('<font size="200%"><b>' + first + '</b><i> ' + last + '</i></font>');
-            </script>'s Used Smart Phone Store
-        </h1>
+        <center>
+            <span style="font-size: 600%;"> 
+                <script>
+                    document.write('<b>' + first + '</b><i> ' + last + '</i>\'s');
+                </script>
+            </span>
+            <h1>Used Smart Phone Store</h1>
+            </center>
         <p style="text-align: center; font-weight: bold;">
             Hits:<span id="hits_span">0</span>
             Spins:<span id="spins_span">0</span>
@@ -103,6 +106,18 @@
         </main>
     </div>
     <footer>
+        <script>
+       line = 1;
+       now = new Date();
+       document.write(`
+        <table border="1" style="margin-left: auto; margin-right: auto; text-align: center;">
+            <tr><th colspan="2"><h1>Your One Stop For Used Phones - ${first[0] + '.' + last[0] + '.'}'s</h1></th></tr>
+            <tr><td>${line++}.</td><td><br />Copyright @${first + ' ' + last}</td></tr>
+            <tr><td>${line++}.</td><td>${now.getFullYear()}</td></tr>
+            <tr><td>${line++}.</td><td>${now.getHours() +':' + now.getMinutes()}  ${(now.getHours() < 12)?'AM':'PM'}</td></tr>
+        </table>
+        `);
+    </script>
         <h1>
             Your One Stop For Used Phones -
             <script>

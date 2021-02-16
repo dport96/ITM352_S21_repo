@@ -25,12 +25,14 @@
     </header>
     <div>
         <main>
-            <section class="item" onmouseover="spins = spins + 1; hits_span.innerHTML = hits;spins_span.innerHTML = spins;this.className = 'item rotate';" 
+            <section class="item" 
+            onmouseover="
+                spins += 2;
+                spins_span.innerHTML = spins;
+                this.className = 'item rotate';" 
             onclick="
-            hits = hits + 1;
-            hits_span.innerHTML = hits;
-            spins_span.innerHTML = spins;
-            this.className='item';
+                hits_span.innerHTML = ++hits; 
+                this.className='item';
             ">
                 <h2>HTC</h2>
                 <p>$40.00</p>
@@ -108,6 +110,6 @@
 
 </html>
 <script>
-    var hits = 10;
-    var spins = 100;
+    var hits = 0;
+    var spins = 0;
 </script>
