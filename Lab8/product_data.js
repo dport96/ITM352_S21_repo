@@ -18,4 +18,12 @@
  price5 = 10.00;
  image5 = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Blackberry.jpg";
 
-console.log("Product variables loaded..." + name1);
+ name6 = "Blackberry Bold";
+ price6 = 15.00;
+ image6 = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Blackberry.jpg";
+
+ name9 = "Blackberry Ultra";
+ price9 = 25.00;
+ image9 = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Blackberry.jpg";
+
+console.log("Product variables loaded...");
