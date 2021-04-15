@@ -1,3 +1,4 @@
+<script src="./product_data.js"></script>
 <script>
     function checkQuantityTextbox(qtyTextboxObj) {
         var errs = isNonNegInt(qtyTextboxObj.value, true);
@@ -35,9 +36,22 @@
 </head>
 
 <body>
-   <form name="quantity_form" action="display_purchase" method="POST">
+   <form name="quantity_form" action="display_purchase?username=itm352" method="POST">
+        <script>
+            for(i in products) {
+                document.write(`<h3>${products[i]["model"]} at \$${products[i]["price"]}</h3>`);
+            }
+        </script>
+
         <label>quantity desired:</label>
         <input name='quantity_textbox' type="text" onkeyup="checkQuantityTextbox(this);">
+        <select name="product_select">
+            <script>
+                for(i in products) {
+                    document.write(`<option value='${i}'>${products[i]["model"]}</option>`);
+                }
+            </script>
+        </select> 
         <span id='qty_textbox_message'>Enter a quantity</span>
         <br>
         <input type="submit" value="Purchase">
