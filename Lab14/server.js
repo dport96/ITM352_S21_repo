@@ -8,20 +8,35 @@ var fs = require('fs');
 //var user_data = require('./user_data.json');
 // Read user data file
 var user_data_file = './user_data.json';
-if(fs.existsSync(user_data_file)) { 
+if (fs.existsSync(user_data_file)) {
     var file_stats = fs.statSync(user_data_file);
-   // console.log(`${user_data_file} has ${file_stats["size"]} characters`);
+    // console.log(`${user_data_file} has ${file_stats["size"]} characters`);
     var user_data = JSON.parse(fs.readFileSync(user_data_file, 'utf-8'));
 } else {
     console.log(`${user_data_file} does not exist!`);
 }
 
-// console.log(user_data);
-
 app.all('*', function (req, res, next) {
     console.log(req.method, req.path);
     next();
-} );
+});
+
+app.post('/process_register', function (req, res) {
+    // add a new user to the DB
+    username = req.body["uname"];
+    user_data[username] = {};
+    user_data[username]["password"] = req.body["psw"];
+    user_data[username]["email"] = req.body["email"];
+    user_data[username]["name"] = req.body["fullname"];
+    // save updated user_data to file (DB)
+    fs.writeFileSync(user_data_file, JSON.stringify(user_data));
+    res.send(`${username} is registered`);
+})
+
+
+// console.log(user_data);
+
+
 
 app.get("/login", function (request, response) {
     // Give a simple login form
@@ -35,15 +50,14 @@ app.get("/login", function (request, response) {
 </body>
     `;
     response.send(str);
- });
+});
 
 // This processes the login form 
 app.post('/process_login', function (request, response, next) {
-    console.log(request.body);
     let username_entered = request.body["uname"];
     let password_entered = request.body["psw"];
-    if(typeof user_data[username_entered] != 'undefined') {
-        if(user_data[username_entered]['password'] == password_entered) {
+    if (typeof user_data[username_entered] != 'undefined') {
+        if (user_data[username_entered]['password'] == password_entered) {
             response.send(`${username_entered} is logged in`);
         } else {
             response.send(`${username_entered} password wrong`);
