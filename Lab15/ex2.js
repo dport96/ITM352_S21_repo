@@ -6,13 +6,30 @@ var qs = require('qs');
 var fs = require('fs');
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
+var session = require('express-session');
+
+app.use(session({secret: "ITM352 rocks!"}));
+
+
+// play with sessions
+app.get('/set_session', function (req, res, next) {
+    res.send(`welcome, your session ID is ${req.session.id}`);
+    next();
+});
+
+app.get('/use_session', function (req, res, next) {
+    res.send(`Your session ID is ${req.session.id}`);
+    req.session.destroy();
+    next();
+});
 
 // play with cookies
 app.get('/set_cookie', function (req, res, next) {
     // console.log(req.cookies);
     let my_name = 'Daniel Port';
     // res.clearCookie('my_name');
-    res.cookie('my_name', my_name, {expire: 5000 + Date.now()});
+    now = new Date();
+    res.cookie('my_name', my_name, {expire: 5000 + now.getTime()});
     res.send(`Cookie for ${my_name} sent`);
     next();
 });
@@ -40,7 +57,7 @@ if (fs.existsSync(user_data_file)) {
 }
 
 app.all('*', function (req, res, next) {
-    console.log(req);
+   // console.log(req);
     console.log(req.method, req.path);
     next();
 });
@@ -63,13 +80,26 @@ app.post('/process_register', function (req, res) {
 
 
 app.get("/login", function (request, response) {
+    if(typeof request.cookies['username'] != 'undefined') {
+       logged_in = `${request.cookies['username']} is already logged in`;
+    }
+    if(typeof request.session['last_login'] != 'undefined') {
+        last_login = 'Last login time was ' + request.session['last_login'];
+    } else {
+        last_login = "first time login";
+    }
+    
     console.log(request);
     // Give a simple login form
     str = `
 <body>
-<form action="" method="POST">
-<input type="text" name="username" size="40" placeholder="enter username" ><br />
-<input type="password" name="password" size="40" placeholder="enter password"><br />
+${logged_in}
+<br>
+Last login: ${last_login}
+<br>
+<form action="process_login" method="POST">
+<input type="text" name="uname" size="40" placeholder="enter username" ><br />
+<input type="password" name="psw" size="40" placeholder="enter password"><br />
 <input type="submit" value="Submit" id="submit">
 </form>
 </body>
@@ -79,10 +109,17 @@ app.get("/login", function (request, response) {
 
 // This processes the login form 
 app.post('/process_login', function (request, response, next) {
+    if(typeof request.session['last_login'] != 'undefined') {
+        console.log('Last login time was ' + request.session['last_login']);
+    } else {
+        console.log("first time login");
+    }
+    request.session['last_login'] = Date();
     let username_entered = request.body["uname"];
     let password_entered = request.body["psw"];
     if (typeof user_data[username_entered] != 'undefined') {
         if (user_data[username_entered]['password'] == password_entered) {
+            response.cookie('username', username_entered);
             response.send(`${username_entered} is logged in`);
         } else {
             response.send(`${username_entered} password wrong`);
