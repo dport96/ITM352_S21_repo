@@ -1,102 +1,34 @@
 var express = require('express');
 var app = express();
 var myParser = require("body-parser");
+var session = require('express-session');
+var products_data = require('./products.json');
+
 app.use(myParser.urlencoded({ extended: true }));
-var qs = require('qs');
-var fs = require('fs');
-var cookieParser = require('cookie-parser');
-app.use(cookieParser());
+app.use(session({secret: "ITM352 rocks!"}));
 
-// play with cookies
-app.get('/set_cookie', function (req, res, next) {
-    // console.log(req.cookies);
-    let my_name = 'Daniel Port';
-    // res.clearCookie('my_name');
-    res.cookie('my_name', my_name, {expire: 5000 + Date.now()});
-    res.send(`Cookie for ${my_name} sent`);
+app.all('*', function (request, response, next) {
+    console.log(`Got a ${request.method} to path ${request.path}`);
+    // need to initialize an object to store the cart in the session. We do it when there is any request so that we don't have to check it exists
+    // anytime it's used
+    if(typeof request.session.cart == 'undefined') { request.session.cart = {}; } 
     next();
 });
 
-// play with cookies
-app.get('/use_cookie', function (req, res, next) {
-    //console.log(req.cookie);
-    if(typeof req.cookies["my_name"] != 'undefined') { 
-        res.send(`Hello ${req.cookies["my_name"]}!`);
-    } else {
-        res.send("I don't know you!");
-    }
-    next();
+app.post("/get_products_data", function (request, response) {
+    response.json(products_data);
 });
 
-//var user_data = require('./user_data.json');
-// Read user data file
-var user_data_file = './user_data.json';
-if (fs.existsSync(user_data_file)) {
-    var file_stats = fs.statSync(user_data_file);
-    // console.log(`${user_data_file} has ${file_stats["size"]} characters`);
-    var user_data = JSON.parse(fs.readFileSync(user_data_file, 'utf-8'));
-} else {
-    console.log(`${user_data_file} does not exist!`);
-}
-
-app.all('*', function (req, res, next) {
-    console.log(req);
-    console.log(req.method, req.path);
-    next();
+app.get("/add_to_cart", function (request, response) {
+    var products_key = request.query['products_key']; // get the product key sent from the form post
+    var quantities = request.query['quantities'].map(Number); // Get quantities from the form post and convert strings from form post to numbers
+    request.session.cart[products_key] = quantities; // store the quantities array in the session cart object with the same products_key. 
+    response.redirect('./cart.html');
 });
 
-app.post('/process_register', function (req, res) {
-    // add a new user to the DB
-    username = req.body["uname"];
-    user_data[username] = {};
-    user_data[username]["password"] = req.body["psw"];
-    user_data[username]["email"] = req.body["email"];
-    user_data[username]["name"] = req.body["fullname"];
-    // save updated user_data to file (DB)
-    fs.writeFileSync(user_data_file, JSON.stringify(user_data));
-    res.send(`${username} is registered`);
-})
-
-
-// console.log(user_data);
-
-
-
-app.get("/login", function (request, response) {
-    console.log(request);
-    // Give a simple login form
-    str = `
-<body>
-<form action="" method="POST">
-<input type="text" name="username" size="40" placeholder="enter username" ><br />
-<input type="password" name="password" size="40" placeholder="enter password"><br />
-<input type="submit" value="Submit" id="submit">
-</form>
-</body>
-    `;
-    response.send(str);
-});
-
-// This processes the login form 
-app.post('/process_login', function (request, response, next) {
-    let username_entered = request.body["uname"];
-    let password_entered = request.body["psw"];
-    if (typeof user_data[username_entered] != 'undefined') {
-        if (user_data[username_entered]['password'] == password_entered) {
-            response.send(`${username_entered} is logged in`);
-        } else {
-            response.send(`${username_entered} password wrong`);
-        }
-    } else {
-        response.send(`${username_entered} not found`);
-    }
-});
-
-// This processes the login form 
-app.post('/process_register', function (request, response, next) {
-    response.send(request.body);
+app.get("/get_cart", function (request, response) {
+    response.json(request.session.cart);
 });
 
 app.use(express.static('./static'));
-
-var listener = app.listen(8080, () => { console.log('server started listening on port ' + listener.address().port) });
+app.listen(8080, () => console.log(`listening on port 8080`));

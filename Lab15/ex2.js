@@ -37,10 +37,13 @@ app.get('/set_cookie', function (req, res, next) {
 // play with cookies
 app.get('/use_cookie', function (req, res, next) {
     //console.log(req.cookie);
-    if(typeof req.cookies["my_name"] != 'undefined') { 
-        res.send(`Hello ${req.cookies["my_name"]}!`);
+    if(typeof req.cookies["username"] != 'undefined') { 
+        let username = req.cookies["username"];
+        res.cookie('username', username, {"expire": -1000});
+        
+        res.send(`${user_data[username]["name"]} is logged in`);
     } else {
-        res.send("I don't know you!");
+        res.send("You are not logged in");
     }
     next();
 });
@@ -93,7 +96,6 @@ app.get("/login", function (request, response) {
     // Give a simple login form
     str = `
 <body>
-${logged_in}
 <br>
 Last login: ${last_login}
 <br>
@@ -119,7 +121,7 @@ app.post('/process_login', function (request, response, next) {
     let password_entered = request.body["psw"];
     if (typeof user_data[username_entered] != 'undefined') {
         if (user_data[username_entered]['password'] == password_entered) {
-            response.cookie('username', username_entered);
+            response.cookie('username', username_entered, {"maxAge": 10*1000});
             response.send(`${username_entered} is logged in`);
         } else {
             response.send(`${username_entered} password wrong`);
