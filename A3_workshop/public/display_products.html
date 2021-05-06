@@ -3,16 +3,11 @@
     <script>
         var products_data;
         var total = 0;
-        /*
         loadJSON('get_products_data', function (response) {
             // Parsing JSON string into object
             products_data = JSON.parse(response);
         });
-        */
-        request('get_products_data', function (response) {
-            // Parsing JSON string into object
-           products_data = JSON.parse(response);
-        });
+        shopping_cart = {};
         loadJSON('get_cart', function (response) {
             // Parsing JSON string into object
             shopping_cart = JSON.parse(response);

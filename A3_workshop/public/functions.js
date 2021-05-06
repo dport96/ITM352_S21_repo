@@ -12,21 +12,6 @@ function loadJSON(service, callback) {
     xobj.send(null);  
  }
 
- async function request(service, callback, post_data={}) {
-     var data;
-     await fetch(service, {
-        method: 'post',
-        body: JSON.stringify(post_data)
-      }).then( function(response) {
-            if(response.ok) {
-                response.json().then(function(json_data){
-                    callback(json_data);
-                });
-            }
-          });
-          //return data;
-}
-
 // This function makes a navigation bar from a products_data object
 
 function nav_bar(this_product_key, products_data) {

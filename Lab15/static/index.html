@@ -1,18 +1,23 @@
 <head>
     <script src="./functions.js"></script>
     <script>
-    var products_data;
-    request('get_products_data', function(response) {
-         // Parsing JSON string into object
-        // products_data = response;
-    }).then(
-        console.log()
-    );
-    var this_product_key = ''
+        var this_product_key = ''
     </script>
-    </head>
-    <body>
-        Go to: <br>
-    <script> nav_bar(this_product_key, products_data);</script>
-    </body>
-    </html>
+</head>
+
+<body>
+    Go to: <br>
+    <div id="menu_id"></div>
+    <script>
+        request('get_products_data', function (products_data) {
+            let i = 1;
+            for (let products_key in products_data) {
+                if (products_key == this_product_key) continue;
+                menu_id.innerHTML += `<br>${i}. <a href='./display_products.html?products_key=${products_key}'>${products_key}<a>&nbsp&nbsp&nbsp;`;
+                    i++;
+            }
+        });
+    </script>
+</body>
+
+</html>
