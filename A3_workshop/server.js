@@ -5,7 +5,8 @@ var session = require('express-session');
 var products_data = require('./products.json');
 
 app.use(myParser.urlencoded({ extended: true }));
-app.use(session({secret: "ITM352 rocks!"}));
+app.use(session({secret: "ITM352 rocks!", resave: true,
+saveUninitialized: true}));
 
 app.all('*', function (request, response, next) {
     console.log(`Got a ${request.method} to path ${request.path}`);
